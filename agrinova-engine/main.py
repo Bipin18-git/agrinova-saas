@@ -7,13 +7,15 @@ import os
 
 app = FastAPI(title="Agrivoltaics Decision Engine API")
 
+# --- UPDATED CORS FIX ---
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"], 
+    allow_origins=["*"],  # Ye kisi bhi Vercel ya live link se request allow kar dega
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# ------------------------
 
 class Location(BaseModel):
     latitude: float
