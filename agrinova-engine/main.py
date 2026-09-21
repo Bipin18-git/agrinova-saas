@@ -29,6 +29,7 @@ class SiteInput(BaseModel):
     daily_electricity_req_kwh: float
     irrigation_available: bool
     preferred_operation: str
+    initial_objective: str  # <-- NAYA COMPULSORY FIELD ADD KIYA HAI
 
 CROP_DATABASE = {
     "paddy": {"type": "Full Sun", "max_panel_coverage": 0.3, "baseline_yield_tonnes_acre": 1.2, "future_crops": ["Mustard", "Turmeric", "Wheat"]},
@@ -52,7 +53,7 @@ DB_FILE = "agrinova_assessments_db.csv"
 
 @app.get("/")
 def health_check():
-    return {"status": "Engine is running with Financial Graph Support"}
+    return {"status": "Engine is running with Objective Tracking"}
 
 @app.post("/api/assess-site")
 def assess_site(data: SiteInput):
@@ -141,11 +142,12 @@ def assess_site(data: SiteInput):
         "Step 12 (Battery / Standalone)": f"Mode: {data.preferred_operation} 🟢",
         "Step 13 (Financial Assessment)": f"Payback: {payback_years} Years 🟢",
         "Step 14 (Feasible Options Check)": "All viable options filtered 🟢",
-        "Step 15 (Farmer Objective)": "Balanced agriculture + energy 🟢",
+        "Step 15 (Farmer Objective)": f"{data.initial_objective.split(' (')[0]} 🟢", # <-- DYNAMIC OBJECTIVE SHOW HOGA YAHAN
         "Step 16 (Final Optimisation)": "Optimal configuration locked 🟢"
     }
 
     final_recommendation_report = {
+        "primary_objective": data.initial_objective, # <-- Naya report metric
         "pv_capacity": f"{recommended_pv_kwp} kW",
         "capex": f"₹{capex_lakhs} lakh",
         "crop": crop_name.capitalize(),
